@@ -1,4 +1,5 @@
 var headers = ['Type', 'Name', 'Direction', 'Description', 'Remove'];
+var $stack = [];
 
 function openModal(type) {
 
@@ -31,6 +32,10 @@ $(document).ready(function() {
         openModal('sequence')
     });
 
+    $("#btn_undo").click(function () {
+        undo_delete();
+    });
+
     $(window).scroll(move_scroll)
 
 });
@@ -39,7 +44,7 @@ function move_scroll(){
 
     var $container = $('#parts');
     var $table = $('#parts_table');
-    var $scroll = $(window).scrollTop();
+    var $scroll = $container.scrollTop();
     var $anchor_top = $table.offset().top;
     var $anchor_bottom = $('#parts_bottom_anchor').offset().top;
 
@@ -150,9 +155,27 @@ function addPart() {
         switch (headers[i]) {
 
             case "Type":
-                var $type = $('#dialog_type').find("select option:selected").text();
-                $td.append($type);
-                //TODO: add symbols to type column
+                var $input = $('#dialog_type').find("select option:selected");
+                var text = $input.text();
+                var val = $input.val();
+
+
+                switch (val) {
+                    case "cds":
+                        $td.append('<img src="res/SBOL Visual 1.0.0 PNG/PNG/32x32/cds.png" />');
+                        break;
+                    case "promoter":
+                        $td.append('<img src="res/SBOL Visual 1.0.0 PNG/PNG/32x32/promoter.png" />');
+                        break;
+                    case "res":
+                        $td.append('<img src="res/SBOL Visual 1.0.0 PNG/PNG/32x32/ribosome-entry-site.png" />');
+                        break;
+                    case "terminator":
+                        $td.append('<img src="res/SBOL Visual 1.0.0 PNG/PNG/32x32/terminator.png" />');
+                        break;
+                }
+                $td.append(text);
+
                 //TODO: find type of part if unspecified
                 break;
             case "Name":
@@ -176,14 +199,37 @@ function addPart() {
                 $td.append(description);
                 break;
             case "Remove":
-                var $remove = $('<button>').attr("type", "button").text("X");
+                var $remove = $('<button>').attr("type", "button").attr("class", "remove").text("X");
                 $remove.click(function () {
-                    $(this).parent().parent().remove();
-                    //TODO: Make delete row reversible
+                    var $row = $(this).parent().parent();
+                    $stack.push($row);
+                    $row.remove();
                 });
                 $td.append($remove);
                 break;
         }
     }
 
+}
+
+function undo_delete() {
+
+    var $table_body = $('#parts_tbody');
+
+    var $row = $stack.pop();
+
+    switch ($row) {
+
+        case undefined:
+            alert("No more deletions to undo!");
+            break;
+        default:
+            $table_body.append($row);
+            $row.find('.remove').click(function () {
+                var $row = $(this).parent().parent();
+                $stack.push($row);
+                $row.remove();
+            });
+            break;
+    }
 }
