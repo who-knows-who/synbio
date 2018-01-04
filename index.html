@@ -3,30 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <title>SynBio</title>
-    <script src="js/jquery-3.2.1.min.js"></script>
-    <script src="js/jquery-ui.js"></script>
+    <link href = "https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
+          rel = "stylesheet">
+    <script src = "https://code.jquery.com/jquery-3.2.1.js"></script>
+    <script src = "https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="js/scripts.js"></script>
-
-
+<style>
+    thead { background-color: white; }
+</style>
 </head>
 
-<body onload="createTable()">
+<body>
 
-<table>
-    <tbody id="sortable">
+<div id="parts">
+    <table id="parts_table">
+        <thead id="parts_thead"></thead>
+        <tbody id="parts_tbody"></tbody>
+    </table>
+    <div id="parts_bottom_anchor"></div>
+</div>
 
-        <tr>
-            <td>Hello</td>
-        </tr>
-        <tr>
-            <td>Hello2</td>
-        </tr>
-    </tbody>
-</table>
-
-<div id="parts"></div>
 <p>
-    <input type="button" id="btn_add_part" value="Add Part" onclick="addPart()" />
+    <button type="button" id="btn_name" >Add Part By Name</button>
+    <button type="button" id="btn_sequence">Add Part By Sequence</button>
 </p>
+
+<div id="dialog_add_part" title="Add Part">
+    <p id="dialog_type"></p>
+    <p id="dialog_part"></p>
+</div>
+
 </body>
 </html>
