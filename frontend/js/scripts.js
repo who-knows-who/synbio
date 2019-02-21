@@ -1,6 +1,7 @@
 var headers = ['Type', 'Name', 'Direction', 'Description', 'Remove'];
 var $stack = [];
 
+<<<<<<< HEAD:frontend/js/scripts.js
 function openModal(type) {
 
     var $dialog = $('#dialog_add_part');
@@ -71,89 +72,55 @@ function move_scroll(){
         $clone_table.remove();
     }
 }
+=======
+>>>>>>> parent of 72182a0... jQuery sources added to .gitignore:js/scripts.js
 
 function createTable() {
 
-    var $table_head = $('#parts_thead');
+    var table = document.createElement('table');
+    table.setAttribute('id', 'partsTable');
 
-    var $tr = $('<tr>').appendTo($table_head);
+    var tableHead = document.createElement('thead');
+
+    var tr = document.createElement('tr');
+    tableHead.appendChild(tr);
+    table.appendChild(tableHead);
 
     for (var i = 0; i < headers.length; i++) {
-        var $th = $('<th>').appendTo($tr);
-        $th.text(headers[i]);
+        var th = document.createElement('th');
+        th.innerText = headers[i];
+        tr.appendChild(th);
     }
 
-    $('#parts_tbody').sortable();
+    var tableBody = document.createElement('tbody');
+    tableBody.setAttribute('id', 'tableBody');
+    table.appendChild(tableBody);
+
+
+    var div = document.getElementById('parts');
+    div.appendChild(table);
+
+    $("#sortable").sortable();
+    $("#tableBody").sortable();
 
 }
 
-function createDialog() {
-
-    var $dialog = $('#dialog_add_part');
-
-    $dialog.dialog({
-        autoOpen: false,
-        modal: true,
-        buttons: [
-            {
-                text: "Cancel",
-                click: function() {
-                    $(this).dialog("close");
-                }
-
-            },
-            {
-                text: "Add",
-                click: function() {
-                    addPart();
-                    $(this).dialog("close");
-                }
-            }
-        ]
-
-    });
-    $dialog.keypress(function(e) {
-        if (e.keyCode === $.ui.keyCode.ENTER) {
-            addPart();
-            $(this).dialog("close");
-        }
-    });
-
-    var types = [
-        {val: "unspecified", text: "Unspecified"},
-        {val: "cds", text: "CDS"},
-        {val: "promoter", text: "Promoter"},
-        {val: "res", text: "Ribosome Entry Site"},
-        {val: "terminator", text: "Terminator"}
-    ];
-
-    var $dialog_type = $('#dialog_type');
-    $dialog_type.attr('id', 'dialog_type').text("Select Part Type: ");
-
-    var $type_select = $('<select>').appendTo($dialog_type);
-    $(types).each(function () {
-        $type_select.append($("<option>").attr('value', this.val).text(this.text));
-    });
-
-
-    var $dialog_part = $('#dialog_part');
-    $dialog_part.attr('id', 'dialog_part');
-    // This part filled at runtime (differs between name/sequence)
-
-}
 function addPart() {
 
-    var $table_body = $('#parts_tbody');
-    var rowCnt = $table_body.find('tr').length;
+    var tableBody = document.getElementById('tableBody');
+    var rowCnt = document.getElementById('partsTable').rows.length;
 
-    var $tr = $('<tr>').appendTo($table_body);
+    var tr = document.createElement('tr');
+    tableBody.appendChild(tr);
 
     for (var i = 0; i < headers.length; i++) {
 
-        var $td = $('<td>').appendTo($tr);
+        var td = document.createElement('td');
+        td = tr.insertCell(i);
 
-        switch (headers[i]) {
+        switch(headers[i]) {
 
+<<<<<<< HEAD:frontend/js/scripts.js
             case "Type":
                 var $input = $('#dialog_type').find("select option:selected");
                 var text = $input.text();
@@ -177,27 +144,21 @@ function addPart() {
                 $td.append(text);
 
                 //TODO: find type of part if unspecified
+=======
+            case 'Type':
+>>>>>>> parent of 72182a0... jQuery sources added to .gitignore:js/scripts.js
                 break;
-            case "Name":
-                var $part = $('#dialog_part');
-                var name;
-                if ($part.attr("type") === "name") {
-                    name = $part.find("input").val();
-                } else {
-                    name = rowCnt.toString();
-                    //TODO: find name of part if sequence given
-                }
-                $td.append(name);
+            case 'Name':
+                var text = document.createElement('input');
+                text.setAttribute('type', 'text');
+                text.setAttribute('value', rowCnt.toString());
+                td.appendChild(text);
                 break;
-            case "Direction":
-                var $select = $('<select>').appendTo($td);
-                $select.append($('<option>').attr("value", "forward").attr("selected", true).text("Forward"));
-                $select.append($('<option>').attr("value", "backward").text("Backward"));
+            case 'Direction':
                 break;
-            case "Description":
-                var description = "";
-                $td.append(description);
+            case 'Description':
                 break;
+<<<<<<< HEAD:frontend/js/scripts.js
             case "Remove":
                 var $remove = $('<button>').attr("type", "button").attr("class", "remove").text("X");
                 $remove.click(function () {
@@ -206,12 +167,21 @@ function addPart() {
                     $row.remove();
                 });
                 $td.append($remove);
+=======
+            case 'Remove':
+                var button = document.createElement('input');
+                button.setAttribute('type', 'button');
+                button.setAttribute('value', 'Remove');
+                button.setAttribute('onClick', 'removeRow(this)');
+                td.appendChild(button);
+>>>>>>> parent of 72182a0... jQuery sources added to .gitignore:js/scripts.js
                 break;
         }
     }
 
 }
 
+<<<<<<< HEAD:frontend/js/scripts.js
 function undo_delete() {
 
     var $table_body = $('#parts_tbody');
@@ -232,4 +202,11 @@ function undo_delete() {
             });
             break;
     }
+=======
+function removeRow(oButton) {
+
+    var table = document.getElementById('partsTable');
+    table.deleteRow(oButton.parentNode.parentNode.rowIndex);
+
+>>>>>>> parent of 72182a0... jQuery sources added to .gitignore:js/scripts.js
 }

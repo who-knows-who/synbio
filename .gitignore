@@ -47,3 +47,8 @@ fabric.properties
 /js/jquery-3.2.1.js
 /js/jquery-3.2.1.min.js
 /js/jquery-ui.js
+
+
+venv/
+/backend/xml_parts.xml
+/backend/xml_parts.xml.gz
