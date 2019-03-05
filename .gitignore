@@ -49,6 +49,8 @@ fabric.properties
 /js/jquery-ui.js
 
 
-venv/
 /backend/xml_parts.xml
 /backend/xml_parts.xml.gz
+/venv/
+/solver/old_data.dzn
+/solver/data.dzn

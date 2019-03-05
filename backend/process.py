@@ -1,6 +1,8 @@
 import os
 from xml.dom.minidom import parse as parse
 
+solver_dir = '../solver/'
+
 
 class Part:
     def __init__(self, name, type, sequence):
@@ -19,6 +21,17 @@ class Part:
     def dzn_str(self):
         return self.name + ', ' + str(self.a) + ', ' + str(self.t) + ', ' + str(self.g) + ', ' + str(self.c)
 
+    def prepend_type(self):
+        if self.type == 'Regulatory':
+            # promotor
+            self.name = 'p' + self.name
+        elif self.type == 'RBS':
+            self.name = 'r' + self.name
+        elif self.type == 'Coding':
+            self.name = 'c' + self.name
+        elif self.type == 'Terminator':
+            self.name = 't' + self.name
+
 
 def get_data(xml_tree):
     name = xml_tree.getElementsByTagName("part_name")[0].childNodes[0].data
@@ -28,12 +41,17 @@ def get_data(xml_tree):
 
 
 def create_dzn():
-    parts_str = "PARTS = { "
-    table_str = "table = ["
+
+    for p in parts:
+        p.prepend_type()
+
+    parts_str = "PARTS = { NULL, "
+    table_str = "data = [| NULL, 0, 0, 0, 0\n\t\t "
     reg_str = "group_regulatory = { "
     rbs_str = "group_rbs = { "
     cod_str = "group_coding = { "
     term_str = "group_terminator = { "
+    null_str = "null = { NULL };"
 
     for part in parts:
         parts_str = parts_str + part.name + ', '
@@ -53,16 +71,21 @@ def create_dzn():
     reg_str = reg_str[:-2] + ' };'
     rbs_str = rbs_str[:-2] + ' };'
     cod_str = cod_str[:-2] + ' };'
-    term_str = term_str[:-2] + ' }'
+    term_str = term_str[:-2] + ' };'
 
-    with open('data.dzn', 'w') as file:
+    if os.path.exists(solver_dir + 'data.dzn'):
+        os.rename(solver_dir + 'data.dzn', solver_dir + 'old_data.dzn')
+
+    with open(solver_dir + 'data.dzn', 'w') as file:
+        file.write('max_parts = 10;' + '\n\n')
         file.write(parts_str + '\n\n')
         file.write('% part name, #a, #t, #g, #c\n')
         file.write(table_str + '\n\n')
         file.write(reg_str + '\n')
         file.write(rbs_str + '\n')
         file.write(cod_str + '\n')
-        file.write(term_str)
+        file.write(term_str + '\n')
+        file.write(null_str)
 
 
 if __name__ == "__main__":
