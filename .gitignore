@@ -54,3 +54,4 @@ fabric.properties
 /venv/
 /solver/old_data.dzn
 /solver/data.dzn
+/backend/data_backup.dzn
