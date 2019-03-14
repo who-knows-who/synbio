@@ -1,6 +1,7 @@
 include "table.mzn";
 include "synbio_predicates.mzn";
 include "synbio_restriction.mzn";
+include "synbio_selected.mzn";
 include "data.dzn";
 
 int: substring_length;
@@ -21,14 +22,10 @@ set of PARTS: null;
 
 % Instantiate user inputs from data file
 int: max_parts;
-set of PARTS: group_selected;
 
 set of int: POSITION = 1..max_parts;
 array[POSITION, FEATURE] of var int: sequence;
 constraint forall(i in POSITION)(table(sequence[i,..], data));
-
-% All parts in group_selected in sequence
-constraint forall(p in group_selected)(exists(i in POSITION)(sequence[i,name] == p));
 
 % First part in sequence must be promotor
 constraint sequence[1,name] in group_regulatory;
