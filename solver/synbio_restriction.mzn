@@ -1,4 +1,4 @@
-array[int] of -2..2: site_1 = [-1,1,1,-2,2];
+array[int] of -2..2: site_1 = [-2,1,2,-2,-1,2];
 
 constraint
   forall(i in POSITION where i!= max(POSITION))

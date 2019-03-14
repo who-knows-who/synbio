@@ -203,16 +203,18 @@ def create_data_dzn():
         os.rename(solver_dir + 'data.dzn', solver_dir + 'old_data.dzn')
 
     with open(solver_dir + 'data.dzn', 'w') as file:
-        file.write('max_parts = 10;\n')
+        file.write('max_parts = %d;\n' % max_parts)
         file.write('substring_length = %s;\n\n' % (str(max_restrict)))
         file.write(parts_str + '\n')
         file.write(feature_str + '\n\n')
         file.write('% part name, #a, #t, #g, #c, f1, ..., fend, l1, ..., lend\n')
+        file.write('% a = -1, t = 1, g = -2, c = 2  MiniZinc likes numbers\n')
         file.write(table_str + '\n\n')
         file.write(reg_str + '\n')
         file.write(rbs_str + '\n')
         file.write(cod_str + '\n')
         file.write(term_str + '\n')
+        file.write("% MiniZinc doesn't like variable length array - null used to pad\n")
         file.write(null_str)
 
 
@@ -258,6 +260,16 @@ def create_selected_mzn():
 
 if __name__ == "__main__":
 
+    valid_max = False
+    while not valid_max:
+        max_parts = input("Input maximum parts to use:\n")
+        try:
+            max_parts = int(max_parts)
+            valid_max = True
+        except ValueError:
+            print("Please input a valid integer.\n")
+
+
     sites = []
     site_count = get_restriction_sites()
 
@@ -278,3 +290,4 @@ if __name__ == "__main__":
     create_selected_mzn()
 
     os.system('minizinc -a solver/synbio.mzn')
+

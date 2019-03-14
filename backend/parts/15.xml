@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+
+<!--Parts from the iGEM Registry of Standard Biological Parts-->
+<rsbpml>
+<part_list>
+<part>
+<part_id>186</part_id>
+<part_name>BBa_R0011</part_name>
+<part_short_name>R0011</part_short_name>
+<part_short_desc>Promoter (lacI regulated, lambda pL hybrid)</part_short_desc>
+<part_type>Regulatory</part_type>
+<release_status>Released HQ 2013</release_status>
+<sample_status>In stock</sample_status>
+<part_results>Works</part_results>
+<part_nickname>lacI+pL</part_nickname>
+<part_rating>1</part_rating>
+<part_url>http://parts.igem.org/Part:BBa_R0011</part_url>
+<part_entered>2003-01-31</part_entered>
+<part_author>Neelaksh Varshney, Grace Kenney, Daniel Shen, Samantha Sutton</part_author>
+<deep_subparts></deep_subparts>
+<specified_subparts></specified_subparts>
+<specified_subscars></specified_subscars>
+<sequences>
+<seq_data>aattgtgagcggataacaattgacattgtgagcggataacaagatactgagcaca
+</seq_data></sequences>
+<features>
+<feature>
+<id>7064</id>
+<title>BBa_R0011</title>
+<type>BioBrick</type>
+<direction>forward</direction>
+<startpos>1</startpos>
+<endpos>54</endpos></feature>
+<feature>
+<id>1999</id>
+<title>lac O1</title>
+<type>operator</type>
+<direction>forward</direction>
+<startpos>3</startpos>
+<endpos>19</endpos></feature>
+<feature>
+<id>2000</id>
+<title>-35</title>
+<type>promoter</type>
+<direction>forward</direction>
+<startpos>20</startpos>
+<endpos>25</endpos></feature>
+<feature>
+<id>2001</id>
+<title>lac O1</title>
+<type>operator</type>
+<direction>forward</direction>
+<startpos>26</startpos>
+<endpos>42</endpos></feature>
+<feature>
+<id>2002</id>
+<title>-10</title>
+<type>promoter</type>
+<direction>forward</direction>
+<startpos>43</startpos>
+<endpos>48</endpos></feature></features>
+<parameters>
+<!-- NOTE: Currently, each parameter name can have only one value.-->
+<!--This will change as we fully support the context of a parameter. RDR 4/2010 -->
+<parameter>
+<name>negative_regulators</name>
+<value>1</value>
+<units></units>
+<url></url>
+<id>22581</id>
+<m_date>2014-07-10 02:55:06</m_date>
+<user_id>22706</user_id>
+<user_name>eileen_qian</user_name></parameter>
+<parameter>
+<name>negative_regulators</name>
+<value>1</value>
+<units></units>
+<url></url>
+<id>5335</id>
+<m_date>2008-12-09 15:47:12</m_date>
+<user_id>135</user_id>
+<user_name>bcanton</user_name></parameter>
+<parameter>
+<name>positive_regulators</name>
+<value>NA</value>
+<units></units>
+<url></url>
+<id>4803</id>
+<m_date>2008-12-09 15:46:49</m_date>
+<user_id>135</user_id>
+<user_name>bcanton</user_name></parameter></parameters>
+<categories>
+<category>//rnap/prokaryote/ecoli/sigma70</category>
+<category>//direction/forward</category>
+<category>//chassis/prokaryote/ecoli</category>
+<category>//promoter</category>
+<category>//regulation/negative</category>
+<category>//classic/regulatory/uncategorized</category></categories>
+<twins>
+<twin>BBa_K086017</twin>
+<twin>BBa_K2449007</twin>
+<twin>BBa_K2553005</twin></twins>
+<samples>
+<!--Samples have been turned off for now - rdr 2013--></samples>
+<references>
+<!--References are not available yet - rdr 2013--></references>
+<groups>
+<!-- Group access information is not yet available - rdr 2013--></groups></part></part_list></rsbpml>
