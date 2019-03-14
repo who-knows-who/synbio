@@ -3,22 +3,25 @@ include "synbio_predicates.mzn";
 include "synbio_restriction.mzn";
 include "data.dzn";
 
-int: max_parts;
 int: substring_length;
 set of int: substring_index = 1..substring_length;
-set of int:combined_index = 1..2*substring_length;
+set of int: combined_index = 1..2*substring_length;
 
+% Allows indexing by name
 enum PARTS;
 enum FEATURE;
-      
+
+% Instantiate part data from data file
 array[PARTS, FEATURE] of int: data;
 set of PARTS: group_regulatory;
 set of PARTS: group_rbs;
 set of PARTS: group_coding;
 set of PARTS: group_terminator;
-set of PARTS: group_selected;
 set of PARTS: null;
 
+% Instantiate user inputs from data file
+int: max_parts;
+set of PARTS: group_selected;
 
 set of int: POSITION = 1..max_parts;
 array[POSITION, FEATURE] of var int: sequence;

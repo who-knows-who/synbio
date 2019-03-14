@@ -1,14 +1,14 @@
 import os
 from xml.dom.minidom import parse as parse
 
-solver_dir = '../solver/'
+solver_dir = 'solver/'
 
 
 class Part:
     def __init__(self, name, type, sequence):
         self.name = name
         self.type = type
-        self.sequence = sequence.replace("\n","")
+        self.sequence = sequence
 
         self.a = sequence.count('a')
         self.t = sequence.count('t')
@@ -50,11 +50,79 @@ class Part:
             self.name = 't' + self.name
 
 
+class Restriction:
+    def __init__(self, sequence_str, site_num):
+        self.sequence = sequence_str
+        self.site_num = site_num
+
+    def site_str(self):
+        ret_str = "array[int] of -2..2: site_" + str(self.site_num) + " = [" \
+                    + str_to_chars(self.sequence) + "];\n"
+        return ret_str
+
+    def constraint_str(self):
+        ret_str = "constraint\n" \
+                         "  forall(i in POSITION where i!= max(POSITION))\n" \
+                         "      (not contains_restriction_site(\n" \
+                         "          sequence[i, l1..lend],\n" \
+                         "          sequence[i+1, f1..fend],\n" \
+                         "          site_" + str(self.site_num) + "));\n\n"
+        return ret_str
+
+
 def get_data(xml_tree):
     name = xml_tree.getElementsByTagName("part_name")[0].childNodes[0].data
     type = xml_tree.getElementsByTagName("part_type")[0].childNodes[0].data
-    sequence = xml_tree.getElementsByTagName("seq_data")[0].childNodes[0].data
-    parts.append(Part(name, type, sequence))
+    sequence = xml_tree.getElementsByTagName("seq_data")[0].childNodes[0].data.replace("\n", "")
+    allowed = True
+    for site in sites:
+        if site.sequence in sequence:
+            allowed = False
+    if allowed:
+        parts.append(Part(name, type, sequence))
+
+
+def get_restriction_sites():
+    finished = False
+    num = 1
+    while not finished:
+        site = input("Enter a restriction site or 'f' to finish:\n").lower()
+        if site == 'f':
+            finished = True
+        else:
+            valid = True
+            for c in site:
+                if c not in ('a', 't', 'g', 'c'):
+                    print('Invalid: ' + c + '. Please only use a, t, g, c.')
+                    valid = False
+            if valid:
+                sites.append(Restriction(site, num))
+                num = num + 1
+
+
+def get_selected_parts():
+    count = 0
+    finished = False
+    parts_list = ""
+    available_parts = []
+    for part in parts:
+        parts_list = parts_list + part.name + " : " + part.type + "\n"
+        available_parts.append(part.name)
+    while not finished:
+        if count == 0:
+            part = input("Enter a part name or 'list' to list:\n")
+        else:
+            part = input("Enter a part name, 'f' to finish, 'list' to list:\n")
+        if (part == 'f') & (count > 0):
+            finished = True
+        elif part == 'list':
+            print(parts_list)
+        else:
+            if part in available_parts:
+                selected.append(part)
+                count = count + 1
+            else:
+                print("That doesn't seem to be an available part.")
 
 
 def str_to_chars(input_str):
@@ -80,38 +148,38 @@ def base_to_int(base):
         print("Error: base" + base)
 
 
-def create_dzn():
+def create_data_dzn():
 
-    for p in parts:
-        p.prepend_type()
-
-    restriction_sites = ["atgc", "gcc"]
     max_restrict = 0
-    restrict_str = ""
-    i = 1
-    for site in restriction_sites:
-        max_restrict = max(max_restrict, len(site))
-        restrict_str = restrict_str + "array[int] of bases: site_" + str(i) + " = " \
-                       + str_to_chars(site) + ";\n"
-        i = i+1
+    for site in sites:
+        max_restrict = max(max_restrict, len(site.sequence))
 
     enum_first_str = ""
     enum_last_str = ""
-    for i in range(1, max_restrict):
-        enum_first_str = enum_first_str + ", f" + str(i)
-        enum_last_str = enum_last_str + ", l" + str(i)
 
-    enum_first_str = enum_first_str + ", fend"
-    enum_last_str = enum_last_str + ", lend };"
-    enum_str = "enum FEATURE = {name, a, t, g, c" + enum_first_str + enum_last_str
+    if max_restrict > 0:
 
-    parts_str = "enum PARTS = { NULL, "
-    table_str = "data = [| NULL, 0, 0, 0, 0" + ", 0" * 2 * max_restrict + "\n\t\t "
+        for i in range(1, max_restrict):
+            enum_first_str = enum_first_str + ", f" + str(i)
+            enum_last_str = enum_last_str + ", l" + str(i)
+
+        enum_first_str = enum_first_str + ", fend"
+        enum_last_str = enum_last_str + ", lend"
+
+    enum_str = "FEATURE = {name, a, t, g, c %s %s };" % (enum_first_str, enum_last_str)
+
+    parts_str = "PARTS = { NULL, "
+    table_str = "data = [| NULL, 0, 0, 0, 0" + (", 0" * 2 * max_restrict) + "\n\t\t "
     reg_str = "group_regulatory = { "
     rbs_str = "group_rbs = { "
     cod_str = "group_coding = { "
     term_str = "group_terminator = { "
     null_str = "null = { NULL };"
+
+    selected_str = "group_selected = { "
+    for part in selected:
+        selected_str = selected_str + part + ', '
+    selected_str = selected_str[:-2] + ' };\n\n'
 
     for part in parts:
         parts_str = parts_str + part.name + ', '
@@ -137,10 +205,9 @@ def create_dzn():
         os.rename(solver_dir + 'data.dzn', solver_dir + 'old_data.dzn')
 
     with open(solver_dir + 'data.dzn', 'w') as file:
-        file.write('int: max_parts = 10;' + '\n')
-        file.write('int: substring_length = ' + str(max_restrict) + ";\n")
-        file.write('set of int: combined_index = 1..2*substring_length;\n\n')
-        file.write(restrict_str + '\n')
+        file.write('max_parts = 10;\n')
+        file.write('substring_length = %s;\n\n' % (str(max_restrict)))
+        file.write(selected_str)
         file.write(parts_str + '\n')
         file.write(enum_str + '\n\n')
         file.write('% part name, #a, #t, #g, #c, f1, ..., fend, l1, ..., lend\n')
@@ -152,8 +219,40 @@ def create_dzn():
         file.write(null_str)
 
 
+def create_restriction_mzn():
+
+    array_str = ""
+    constraint_str = ""
+    for site in sites:
+        array_str = array_str + site.site_str()
+        constraint_str = constraint_str + site.constraint_str()
+
+    with open(solver_dir + 'synbio_restriction.mzn', 'w') as file:
+        file.write(array_str + '\n')
+        file.write(constraint_str)
+
+
 if __name__ == "__main__":
+
+
+    os.chdir('..')
+    sites = []
+    get_restriction_sites()
+
     parts = []
-    for filename in os.listdir('parts'):
-        get_data(parse('parts/' + filename))
-    create_dzn()
+    for filename in os.listdir('backend/parts'):
+        get_data(parse('backend/parts/' + filename))
+
+    # Add letter signifying part type before name
+    # Just for verification of sequences
+    for p in parts:
+        p.prepend_type()
+
+    selected = []
+    get_selected_parts()
+
+    create_data_dzn()
+    create_restriction_mzn()
+
+
+    os.system('minizinc -a solver/synbio.mzn')
