@@ -258,7 +258,6 @@ def create_selected_mzn():
 
 if __name__ == "__main__":
 
-    #os.chdir('..')
     sites = []
     site_count = get_restriction_sites()
 
